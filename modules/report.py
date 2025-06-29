@@ -47,7 +47,7 @@ def write_to_json(data, file_name: str = "output.json") -> None:
     existing.extend(data)
 
     with open(file_name, "w", encoding="utf-8") as f:
-        json.dump(existing, f, indent=2)
+        json.dump(existing, f, indent=2, default=str)
 
 def printer(**kwargs):
     """Utility function to print the results of DMARC, SPF, and BIMI checks in the original format."""
