@@ -49,6 +49,8 @@ def write_to_json(
         except JSONDecodeError:
             print(f"[WARN] {file_name} contained invalid JSON – overwriting it.")
             existing = []
+    else:
+        existing = []
             
 
     existing.extend(data)
