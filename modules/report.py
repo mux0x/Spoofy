@@ -2,6 +2,7 @@
 
 import os
 import pandas as pd
+import json
 from colorama import init, Fore, Style
 
 # Initialize colorama
@@ -32,6 +33,21 @@ def write_to_excel(data, file_name="output.xlsx"):
     else:
         pd.DataFrame(data).to_excel(file_name, index=False)
 
+def write_to_json(data, file_name: str = "output.json") -> None:
+    """
+    Append or create a JSON file with the collected results.
+    Keeps existing content if the file already exists.
+    """
+    if os.path.exists(file_name) and os.path.getsize(file_name) > 0:
+        with open(file_name, "r", encoding="utf-8") as f:
+            existing = json.load(f)
+    else:
+        existing = []
+
+    existing.extend(data)
+
+    with open(file_name, "w", encoding="utf-8") as f:
+        json.dump(existing, f, indent=2)
 
 def printer(**kwargs):
     """Utility function to print the results of DMARC, SPF, and BIMI checks in the original format."""
