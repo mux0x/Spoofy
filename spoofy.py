@@ -105,12 +105,13 @@ def main():
         "-iL", type=str, help="File containing a list of domains to process."
     )
     parser.add_argument(
-        "-o",
+        "-of",
         type=str,
         choices=["stdout", "xls", "json"],
         default="stdout",
         help="Output format: stdout, json, or xls (default: stdout).",
     )
+    parser.add_argument("-o", type=str, help="Output file path")
     parser.add_argument(
         "-t", type=int, default=4, help="Number of threads to use (default: 4)"
     )
@@ -139,14 +140,20 @@ def main():
 
     domain_queue.join()
 
-    if args.o == "xls" and results:
+    if args.o:
+        filename = args.o
+    else:
+        filename = "output.json"
+
+    if args.of == "xls" and results:
         report.write_to_excel(results)
         print("Results written to output.xlsx")
-    elif args.o == "json" and results:
+    elif args.of == "json" and results:
         # Overwrite for single-domain mode, append for a list
         append = args.iL is not None
-        report.write_to_json(results, append=append)
-        print("Results written to output.json")
+
+        report.write_to_json(results, append=append, file_name=filename)
+        print(f"Results written to {filename}")
 
     for _ in range(len(threads)):
         domain_queue.put(None)
