@@ -151,8 +151,8 @@ def main():
     elif args.of == "json" and results:
         # Overwrite for single-domain mode, append for a list
         append = args.iL is not None
+        report.write_to_json(results[0] if len(results) == 1 else results, append=append, file_name=filename)
 
-        report.write_to_json(results, append=append, file_name=filename)
         print(f"Results written to {filename}")
 
     for _ in range(len(threads)):

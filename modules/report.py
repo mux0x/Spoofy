@@ -36,13 +36,21 @@ def write_to_excel(data, file_name="output.xlsx"):
 def write_to_json(
     data,
     file_name: str = "output.json",
-    append: bool = True,                  # ← new flag
+    append: bool = True,
 ) -> None:
     """
-    Append or create a JSON file with the collected results.
-    Keeps existing content if the file already exists.
+    Write results to JSON.
+    - If append = False: write a single dict or list.
+    - If append = True: treat both input and existing data as lists.
     """
-    if append and os.path.exists(file_name) and os.path.getsize(file_name) > 0:
+    if not append:
+        # Overwrite with either a single dict or list
+        with open(file_name, "w", encoding="utf-8") as f:
+            json.dump(data, f, indent=2, default=str)
+        return
+
+    # If appending, always work with lists
+    if os.path.exists(file_name) and os.path.getsize(file_name) > 0:
         try:
             with open(file_name, "r", encoding="utf-8") as f:
                 existing = json.load(f)
@@ -51,9 +59,11 @@ def write_to_json(
             existing = []
     else:
         existing = []
-            
 
-    existing.extend(data)
+    if isinstance(data, dict):
+        existing.append(data)
+    else:
+        existing.extend(data)
 
     with open(file_name, "w", encoding="utf-8") as f:
         json.dump(existing, f, indent=2, default=str)
