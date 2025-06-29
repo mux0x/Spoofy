@@ -143,7 +143,9 @@ def main():
         report.write_to_excel(results)
         print("Results written to output.xlsx")
     elif args.o == "json" and results:
-        report.write_to_json(results)
+        # Overwrite for single-domain mode, append for a list
+        append = args.iL is not None
+        report.write_to_json(results, append=append)
         print("Results written to output.json")
 
     for _ in range(len(threads)):

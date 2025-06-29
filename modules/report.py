@@ -33,16 +33,23 @@ def write_to_excel(data, file_name="output.xlsx"):
     else:
         pd.DataFrame(data).to_excel(file_name, index=False)
 
-def write_to_json(data, file_name: str = "output.json") -> None:
+def write_to_json(
+    data,
+    file_name: str = "output.json",
+    append: bool = True,                  # ← new flag
+) -> None:
     """
     Append or create a JSON file with the collected results.
     Keeps existing content if the file already exists.
     """
-    if os.path.exists(file_name) and os.path.getsize(file_name) > 0:
-        with open(file_name, "r", encoding="utf-8") as f:
-            existing = json.load(f)
-    else:
-        existing = []
+    if append and os.path.exists(file_name) and os.path.getsize(file_name) > 0:
+        try:
+            with open(file_name, "r", encoding="utf-8") as f:
+                existing = json.load(f)
+        except JSONDecodeError:
+            print(f"[WARN] {file_name} contained invalid JSON – overwriting it.")
+            existing = []
+            
 
     existing.extend(data)
 
